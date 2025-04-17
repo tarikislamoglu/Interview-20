@@ -177,18 +177,18 @@ const CurrencyConverter = () => {
   const [price, setPrice] = useState(0);
   const [to, setTo] = useState("USD");
   const [from, setFrom] = useState("EUR");
-  const [cost, setCost] = useState(0);
+  const [result, setResult] = useState(0);
 
   useEffect(() => {
     if (from && to && price > 0) {
       const fetchData = async () => {
-        const api_key = "f6743b271d8b99d1e8a941987b3b4d8c";
+        const key = "f84ff90cd96d790017d046f8";
 
         try {
           const res = await axios.get(
-            `https://api.exchangeratesapi.io/v1/convert?access_key=${api_key}&from=${from}&to=${to}&amount=${price}`
+            `https://v6.exchangerate-api.com/v6/${key}/pair/${from}/${to}`
           );
-          setCost(res.data.result);
+          setResult(res.data.conversion_rate);
         } catch (err) {
           console.log(err);
         }
@@ -235,7 +235,7 @@ const CurrencyConverter = () => {
       </div>
       <div>
         <p>
-          Result:<span>{cost > 0 ? `${cost.toFixed(2)} ${to}` : ""}</span>
+          Result:<span>{result ? `${result.toFixed(2)} ${to}` : ""}</span>
         </p>
       </div>
     </div>
