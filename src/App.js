@@ -188,7 +188,7 @@ const CurrencyConverter = () => {
           const res = await axios.get(
             `https://v6.exchangerate-api.com/v6/${key}/pair/${from}/${to}`
           );
-          setResult(res.data.conversion_rate);
+          setResult(res.data.conversion_rate * price);
         } catch (err) {
           console.log(err);
         }
@@ -208,11 +208,12 @@ const CurrencyConverter = () => {
   }, []);
 
   return (
-    <div>
-      <div className="flex">
-        <div>
+    <div className="flex flex-col items-center">
+      <div className="flex p-5 space-x-10 justify-center">
+        <div className="flex items-baseline space-x-2">
           <label>Convert</label>
           <input
+            className="border-2 text-center"
             type="number"
             min="0"
             step="any"
@@ -220,22 +221,30 @@ const CurrencyConverter = () => {
             value={price}
           />
         </div>
-        <div>
+        <div className="flex items-baseline space-x-2">
           <label>From</label>
-          <select onChange={(e) => setFrom(e.target.value)} value={from}>
+          <select
+            className="border-2 ml-2 text-center"
+            onChange={(e) => setFrom(e.target.value)}
+            value={from}
+          >
             {currencyOpt}
           </select>
         </div>
-        <div>
+        <div className="flex items-baseline space-x-2">
           <label>To</label>
-          <select onChange={(e) => setTo(e.target.value)} value={to}>
+          <select
+            className="border-2 ml-2 text-center"
+            onChange={(e) => setTo(e.target.value)}
+            value={to}
+          >
             {currencyOpt}
           </select>
         </div>
       </div>
       <div>
-        <p>
-          Result:<span>{result ? `${result.toFixed(2)} ${to}` : ""}</span>
+        <p className="font-bold">
+          {result ? `${price} ${from} = ${result.toFixed(2)} ${to}` : ""}
         </p>
       </div>
     </div>
