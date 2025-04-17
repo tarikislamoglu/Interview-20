@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
 const CURRENCY_NAME_TO_CODE = {
@@ -166,13 +166,80 @@ const CURRENCY_NAME_TO_CODE = {
   "Yemeni Rial": "YER",
   "South African Rand": "ZAR",
   "Zambian Kwacha": "ZMW",
-  "Zimbabwean Dollar": "ZWL"
+  "Zimbabwean Dollar": "ZWL",
 };
 
 function App() {
   return <CurrencyConverter />;
 }
 
-const CurrencyConverter = () => {};
+const CurrencyConverter = () => {
+  const [price, setPrice] = useState(0);
+  const [to, setTo] = useState("USD");
+  const [from, setFrom] = useState("EUR");
+  const [cost, setCost] = useState(0);
+
+  useEffect(() => {
+    if (from && to && price > 0) {
+      const fetchData = async () => {
+        const api_key = "f6743b271d8b99d1e8a941987b3b4d8c";
+
+        try {
+          const res = await axios.get(
+            `https://api.exchangeratesapi.io/v1/convert?access_key=${api_key}&from=${from}&to=${to}&amount=${price}`
+          );
+          setCost(res.data.result);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      fetchData();
+    }
+  }, [from, to, price]);
+
+  const currencyOpt = useMemo(() => {
+    return Object.entries(CURRENCY_NAME_TO_CODE).map(([key, value]) => {
+      return (
+        <option value={value} key={value}>
+          {key}
+        </option>
+      );
+    });
+  }, []);
+
+  return (
+    <div>
+      <div className="flex">
+        <div>
+          <label>Convert</label>
+          <input
+            type="number"
+            min="0"
+            step="any"
+            onChange={(e) => setPrice(Number(e.target.value))}
+            value={price}
+          />
+        </div>
+        <div>
+          <label>From</label>
+          <select onChange={(e) => setFrom(e.target.value)} value={from}>
+            {currencyOpt}
+          </select>
+        </div>
+        <div>
+          <label>To</label>
+          <select onChange={(e) => setTo(e.target.value)} value={to}>
+            {currencyOpt}
+          </select>
+        </div>
+      </div>
+      <div>
+        <p>
+          Result:<span>{cost > 0 ? `${cost.toFixed(2)} ${to}` : ""}</span>
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export default App;
